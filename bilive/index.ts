@@ -5,7 +5,7 @@ import Options from './options'
 import Listener from './listener'
 /**
  * 主程序
- * 
+ *
  * @class BiLive
  */
 class BiLive {
@@ -16,7 +16,7 @@ class BiLive {
   public loop!: NodeJS.Timer
   /**
    * 开始主程序
-   * 
+   *
    * @memberof BiLive
    */
   public async Start() {
@@ -36,7 +36,7 @@ class BiLive {
   }
   /**
    * 计时器
-   * 
+   *
    * @private
    * @memberof BiLive
    */
@@ -50,11 +50,12 @@ class BiLive {
     const cstMin = cst.getUTCMinutes()
     if (cstString === '00:10') _user.forEach(user => user.nextDay())
     else if (cstString === '13:55') _user.forEach(user => user.sendGift())
+    else if (cstString === '12:00') _user.forEach(user => user.autoSend())
     if (cstMin === 30 && cstHour % 8 === 0) _user.forEach(user => user.daily())
   }
   /**
    * 监听
-   * 
+   *
    * @memberof BiLive
    */
   public Listener() {
@@ -64,9 +65,9 @@ class BiLive {
   }
   /**
    * 参与抽奖
-   * 
+   *
    * @private
-   * @param {raffleMSG} raffleMSG 
+   * @param {raffleMSG} raffleMSG
    * @memberof BiLive
    */
   private _Raffle(raffleMSG: raffleMSG | appLightenMSG) {
