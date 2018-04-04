@@ -362,7 +362,7 @@ class User extends Online {
                 send_num = giftData.gift_num
               }
               else {
-                send_num = Math.floor(intimacy_needed / bag_value)
+                send_num = Math.floor(intimacy_needed / gift_value)
               }
               if (send_num === 0) {
                 tools.Log(this.nickname,`已完成送礼`)
