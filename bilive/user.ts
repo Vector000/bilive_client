@@ -82,7 +82,6 @@ class User extends Online {
     this.silver2coin()
     this.sendGift()
     this.signGroup()
-    this.autoSend()
     this.GetUserInfo()
     this._getuserInfo = setInterval(() => this.GetUserInfo(), 36e+5)//每小时获取一次用户信息
   }
