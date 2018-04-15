@@ -111,7 +111,7 @@
     },
     "sendGift": {
       "description": "自动送礼",
-      "tip": "自动送出剩余时间不足24小时的礼物",
+      "tip": "自动送出剩余时间不足12小时的礼物",
       "type": "boolean"
     },
     "sendGiftRoom": {
