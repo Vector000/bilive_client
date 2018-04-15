@@ -262,7 +262,7 @@ class User extends Online {
       if (bagInfo.body.code === 0) {
         if (bagInfo.body.data.length > 0) {
           for (const giftData of bagInfo.body.data) {
-            if (giftData.expireat > 0 && giftData.expireat < 24 * 60 * 60) {
+            if (giftData.expireat > 0 && giftData.expireat < 12 * 60 * 60) {
               // expireat单位为分钟, 永久礼物值为0
               const send: request.Options = {
                 method: 'POST',
