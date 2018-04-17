@@ -349,7 +349,7 @@ class User extends Online {
                   bag_value = gift_value * giftData.gift_num//亿圆
                 break
                 case 10:
-                  gift_value = 199
+                  gift_value = 45
                   bag_value = gift_value * giftData.gift_num//蓝白胖次
                 break
                 case 115:
@@ -363,30 +363,28 @@ class User extends Online {
               else {
                 send_num = Math.floor(intimacy_needed / gift_value)
               }
-              if (send_num === 0) {
-                tools.Log(this.nickname,`已完成送礼`)
-                return
-              }
-              const sendBagW = await tools.XHR<sendBagW>({
-                method: 'POST',
-                uri: `${apiLiveOrigin}/gift/v2/live/bag_send`,
-                body: `uid=${uid}&gift_id=${giftData.gift_id}&ruid=${ruid}&gift_num=${send_num}&bag_id=${giftData.bag_id}&platform=pc&biz_code=live&biz_id=${room_id}&rnd=${AppClient.RND}&storm_beat_id=0&metadata=&price=0&csrf_token=${this.userData.cookie.substr(9,32)}`,
-                json: true,
-                jar: this.jar,
-                headers: this.headers
-              })
-              if (sendBagW === undefined || sendBagW.response.statusCode !== 200) continue
-              if (sendBagW.body.code === 0) {
-                const sendBagWData = sendBagW.body.data
-                tools.Log(this.nickname, '自动送礼', `向房间 ${room_id} 赠送 ${sendBagWData.gift_num} 个${sendBagWData.gift_name}`)
-                intimacy_needed = intimacy_needed - send_num * gift_value
-                if (intimacy_needed === 0) {
-                  tools.Log(this.nickname,`亲密度已达上限`)
-                  return
+              if (send_num > 0) {
+                const sendBagW = await tools.XHR<sendBagW>({
+                  method: 'POST',
+                  uri: `${apiLiveOrigin}/gift/v2/live/bag_send`,
+                  body: `uid=${uid}&gift_id=${giftData.gift_id}&ruid=${ruid}&gift_num=${send_num}&bag_id=${giftData.bag_id}&platform=pc&biz_code=live&biz_id=${room_id}&rnd=${AppClient.RND}&storm_beat_id=0&metadata=&price=0&csrf_token=${this.userData.cookie.substr(9,32)}`,
+                  json: true,
+                  jar: this.jar,
+                  headers: this.headers
+                })
+                if (sendBagW === undefined || sendBagW.response.statusCode !== 200) continue
+                if (sendBagW.body.code === 0) {
+                  const sendBagWData = sendBagW.body.data
+                  tools.Log(this.nickname, '自动送礼V2', `向房间 ${room_id} 赠送 ${sendBagWData.gift_num} 个${sendBagWData.gift_name}`)
+                  intimacy_needed = intimacy_needed - send_num * gift_value
+                  if (intimacy_needed === 0) {
+                    tools.Log(this.nickname,`亲密度已达上限`)
+                    return
+                  }
                 }
+                else tools.Log(this.nickname, '自动送礼V2', `向房间 ${room_id} 赠送 ${giftData.gift_num} 个${giftData.gift_name} 失败`, sendBagW.body)
+                await tools.Sleep(5000)
               }
-              else tools.Log(this.nickname, '自动送礼', `向房间 ${room_id} 赠送 ${giftData.gift_num} 个${giftData.gift_name} 失败`, sendBagW.body)
-              await tools.Sleep(5000)
             }
           }
           tools.Log(this.nickname,`已完成送礼`)
