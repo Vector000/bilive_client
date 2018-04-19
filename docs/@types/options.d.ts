@@ -49,6 +49,7 @@ interface userData {
   raffle: boolean
   sendGift: boolean
   sendGiftRoom: number
+  autoSend: boolean
   signGroup: boolean
 }
 interface optionsInfo {
@@ -72,6 +73,7 @@ interface optionsInfo {
   raffle: configInfoData
   sendGift: configInfoData,
   sendGiftRoom: configInfoData,
+  autoSend: configInfoData
   signGroup: configInfoData
 }
 interface configInfoData {
