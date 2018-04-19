@@ -30,6 +30,7 @@
     "raffle": false,
     "sendGift": false,
     "sendGiftRoom": 0,
+    "autoSend": false,
     "signGroup": false
   },
   "info": {

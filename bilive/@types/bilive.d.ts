@@ -89,7 +89,11 @@ interface message {
   id: number
 }
 /**
+<<<<<<< HEAD
  * 抽奖raffle信息
+=======
+ * 抽奖信息
+>>>>>>> master
  *
  * @interface raffleMSG
  * @extends {message}
@@ -99,9 +103,15 @@ interface raffleMSG extends message {
   time: number
 }
 /**
+<<<<<<< HEAD
  * 抽奖lottery信息
  *
  * @interface lotteryMSG
+=======
+ * app快速抽奖信息
+ *
+ * @interface appLightenMSG
+>>>>>>> master
  * @extends {message}
  */
 interface lotteryMSG extends message {
@@ -110,7 +120,11 @@ interface lotteryMSG extends message {
 }
 // listener
 /**
+<<<<<<< HEAD
  * 抽奖raffle检查
+=======
+ * 抽奖检查
+>>>>>>> master
  *
  * @interface raffleCheck
  */
@@ -132,9 +146,15 @@ interface raffleCheckData {
   status: number
 }
 /**
+<<<<<<< HEAD
  * 抽奖lottery检查
  *
  * @interface lotteryCheck
+=======
+ * 快速抽奖检查
+ *
+ * @interface lightenCheck
+>>>>>>> master
  */
 interface lotteryCheck {
   code: number
@@ -250,6 +270,20 @@ interface raffleRewardData {
   status?: number
 }
 /**
+<<<<<<< HEAD
+=======
+ * 快速抽奖结果信息
+ *
+ * @interface lightenReward
+ */
+interface lightenReward {
+  code: number
+  msg: string
+  message: string
+  data: [number]
+}
+/**
+>>>>>>> master
  * App快速抽奖结果信息
  *
  * @interface appLightenReward

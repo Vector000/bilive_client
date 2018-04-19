@@ -69,6 +69,7 @@ class User extends Online {
     this._eventRoom = false
     this._silver2coin = false
   }
+  protected _getuserInfo!: NodeJS.Timer
   /**
    * 日常
    *
@@ -81,8 +82,11 @@ class User extends Online {
     this.silver2coin()
     this.sendGift()
     this.signGroup()
+<<<<<<< HEAD
     this.autoSend()
     this._autosend = setInterval(() => this.GetUserInfo(), 288e+5)//每8小时检查一次勋章亲密度
+=======
+>>>>>>> master
     this.GetUserInfo()
     this._getuserInfo = setInterval(() => this.GetUserInfo(), 36e+5)//每小时获取一次用户信息
   }

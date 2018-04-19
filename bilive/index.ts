@@ -52,6 +52,7 @@ class BiLive {
     const cstMin = cst.getUTCMinutes()
     // 每天00:10刷新任务
     if (cstString === '00:10') _user.forEach(user => user.nextDay())
+<<<<<<< HEAD
     // 每天13:55再次自动送礼, 因为一般活动14:00结束
     else if (cstString === '13:55') _user.forEach(user => user.sendGift())
     // 每天00:30, 06:30, 12:30, 18:30做日常
@@ -59,6 +60,11 @@ class BiLive {
     // 每天03:00到09:00关闭抽奖
     if (cstHour > 2 && cstHour < 9) this._raffle = false
     else this._raffle = true
+=======
+    else if (cstString === '13:58') _user.forEach(user => user.sendGift())
+    else if (cstString === '01:00') _user.forEach(user => user.autoSend())
+    if (cstMin === 30 && cstHour % 6 === 0) _user.forEach(user => user.daily())
+>>>>>>> master
   }
   /**
    * 监听
@@ -116,4 +122,8 @@ const lotteryPathname = '/lottery/v1/lottery'
 const _user: Map<string, User> = new Map()
 const _options: _options = <_options>{}
 export default BiLive
+<<<<<<< HEAD
 export { liveOrigin, apiVCOrigin, apiLiveOrigin, smallTVPathname, rafflePathname, lotteryPathname, _user, _options }
+=======
+export { liveOrigin, apiVCOrigin, apiLiveOrigin, smallTVPathname, rafflePathname, lightenPathname, _user, _options }
+>>>>>>> master
