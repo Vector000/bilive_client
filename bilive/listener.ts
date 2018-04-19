@@ -45,7 +45,7 @@ class Listener extends EventEmitter {
    * @type {number}
    * @memberof Listener
    */
-  private _lightenID: number = 0
+  private _lotteryID: number = 0
   /**
    * app快速抽奖ID
    * 
@@ -97,15 +97,15 @@ class Listener extends EventEmitter {
     this._RaffleCheck(url, roomID, 'raffle')
   }
   /**
-   * 检查房间抽奖信息
+   * 检查房间抽奖raffle信息
    * 
    * @private
    * @param {string} url 
    * @param {number} roomID 
-   * @param {('smallTV' | 'raffle' | 'lighten')} raffle 
+   * @param {('smallTV' | 'raffle')} raffle 
    * @memberof Listener
    */
-  private async _RaffleCheck(url: string, roomID: number, raffle: 'smallTV' | 'raffle' | 'lighten') {
+  private async _RaffleCheck(url: string, roomID: number, raffle: 'smallTV' | 'raffle') {
     const check: request.Options = {
       uri: `${url}/check?roomid=${roomID}`,
       json: true,
@@ -120,6 +120,35 @@ class Listener extends EventEmitter {
           roomID,
           id: +data.raffleId,
           time: +data.time
+        }
+        this._RaffleHandler(message)
+      })
+    }
+  }
+  /**
+   * 检查房间抽奖lottery信息
+   * 
+   * @private
+   * @param {string} url 
+   * @param {number} roomID 
+   * @memberof Listener
+   */
+  // @ts-ignore 暂时无用
+  private async _LotteryCheck(url: string, roomID: number) {
+    const check: request.Options = {
+      uri: `${url}/check?roomid=${roomID}`,
+      json: true,
+      headers: { 'Referer': `${liveOrigin}/${tools.getShortRoomID(roomID)}` }
+    }
+    const lotteryCheck = await tools.XHR<lotteryCheck>(check)
+    if (lotteryCheck !== undefined && lotteryCheck.response.statusCode === 200
+      && lotteryCheck.body.code === 0 && lotteryCheck.body.data.guard.length > 0) {
+      lotteryCheck.body.data.guard.forEach(data => {
+        const message: lotteryMSG = {
+          cmd: 'lottery',
+          roomID,
+          id: +data.id,
+          type: data.keyword
         }
         this._RaffleHandler(message)
       })
@@ -143,7 +172,7 @@ class Listener extends EventEmitter {
       roomInfo.body.data.event_corner.forEach(event => {
         const type = event.event_type.split('-')
         if (type.length !== 2) return
-        const message: appLightenMSG = {
+        const message: lotteryMSG = {
           cmd: 'appLighten',
           roomID,
           id: +type[1],
@@ -157,10 +186,10 @@ class Listener extends EventEmitter {
    * 监听抽奖消息
    * 
    * @private
-   * @param {(raffleMSG | appLightenMSG)} raffleMSG 
+   * @param {(raffleMSG | lotteryMSG)} raffleMSG 
    * @memberof Listener
    */
-  private _RaffleHandler(raffleMSG: raffleMSG | appLightenMSG) {
+  private _RaffleHandler(raffleMSG: raffleMSG | lotteryMSG) {
     const roomID = raffleMSG.roomID
     const id = raffleMSG.id
     let msg = ''
@@ -174,9 +203,9 @@ class Listener extends EventEmitter {
         if (this._raffleID >= id) return
         this._raffleID = id
         break
-      case 'lighten':
-        if (this._lightenID >= id) return
-        this._lightenID = id
+      case 'lottery':
+        if (this._lotteryID >= id) return
+        this._lotteryID = id
         break
       case 'appLighten':
         if (this._appLightenID >= id) return
