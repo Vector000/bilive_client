@@ -31,11 +31,11 @@
 7. `npm run build`
 8. `npm start`
 
-## 使用Docker
+## 使用Docker [项目地址](https://github.com/Disappear9/bilive_client_docker)
 1. 安装 [Docker](https://docs.docker-cn.com/engine/installation)
-2. 拉取镜像 `docker pull disappear9/bilive_client` (其他架构(如arm)需要手动选择tag) 
+2. 拉取镜像 `docker pull disappear9/bilive_client` (默认latest为x64 alpine，其他架构(如arm)需要手动选择tag) 
 3. 创建Volume `docker volume create bilivec_data`
-4. 启动容器 `docker run -d -p 23333:23333 --name bilivec -v bilivec_data:/app/options disappear9/bilive_client`
+4. 启动容器 `docker run -d -p 23333:23333 --name bilive_client -v bilivec_data:/app/options disappear9/bilive_client` 
 
 [点此进行设置](http://github.halaal.win/bilive_client/)\
 [国内设置地址](http://lzoczr.gitee.io/bilive_client_view/)\
