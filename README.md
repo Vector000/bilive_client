@@ -31,6 +31,13 @@
 7. `npm run build`
 8. `npm start`
 
+## 使用Docker
+1. 安装 [Docker](https://docs.docker-cn.com/engine/installation)
+2. 拉取镜像 `docker pull disappear9/bilive_client`
+3. 创建Volume `docker volume create bilivec_data`
+4. 启动容器 `docker run -d -p 23333:23333 --name bilivec -v bilivec:/app/options bilivec`
+
+
 [点此进行设置](http://github.halaal.win/bilive_client/)\
 [国内设置地址](http://lzoczr.gitee.io/bilive_client_view/)\
 可使用`/doc/index.html`进行本地设置，推荐\
