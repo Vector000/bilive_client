@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import fs from 'fs'
+import path from 'path'
 import util from 'util'
 const FSwriteFile = util.promisify(fs.writeFile)
 /**
@@ -12,7 +13,9 @@ class Options extends EventEmitter {
   constructor() {
     super()
     // 根据npm start参数不同设置不同路径
-    this._dirname = __dirname + (process.env.npm_package_scripts_start === 'tsc-watch --onSuccess \"node build/app.js\"' ? '/../' : '')
+    // this._dirname = __dirname + (process.env.npm_package_scripts_start === 'tsc-watch --onSuccess \"node build/app.js\"' ? '/../' : '')
+    // bugkun(nopast)：修复pm2下路径出错的问题
+    this._dirname = path.join(process.cwd(), '/')
     // 检查是否有options目录
     const hasDir = fs.existsSync(this._dirname + 'options/')
     if (!hasDir) fs.mkdirSync(this._dirname + 'options/')

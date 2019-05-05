@@ -1,0 +1,15 @@
+﻿{
+    "apps": [{
+      "name": "bilive_client",
+      "script": "./build/app.js",
+      "cwd": "./",
+      "exec_mode": "fork",
+      "max_memory_restart": "1G",
+      "autorestart": true,
+      "node_args": [],
+      "args": [],
+      "env": {
+        
+      }
+    }]
+  }
