@@ -1,9 +1,14 @@
+import { B64XorCipher, modal } from './tools.ts'
+
+declare const options: any
+declare const window: any
+
 /**
  * 与服务器进行通信并返回结果
  * 
  * @class Options
  */
-class Options {
+export class Options {
   constructor() {
     // 关闭窗口时断开连接
     window.onunload = () => { options.close() }
@@ -88,8 +93,31 @@ class Options {
       if (typeof this.onwsclose === 'function') this.onwsclose(data)
       else console.error(data)
     }
-    this._ws.onmessage = data => {
-      const message: message = JSON.parse(data.data)
+    this._ws.onmessage = _data => {
+      const data = Object.assign({}, _data, { data: B64XorCipher.decode(window.netkey, _data.data)})
+      let message: message;
+      const modalOptions = {
+        onOk() {
+          window.location.reload()
+        },
+        onClose() {
+          window.location.reload()
+        }
+      }
+      try {
+        message = JSON.parse(data.data)
+      } catch (err) {
+        console.log(err)
+        if (window.newNetkey) {
+          window.netkey = window.newNetkey
+          window.newNetkey = null
+        } else {
+          modal(Object.assign({ body: '密钥错误，请重新输入!' }, modalOptions))
+        }
+        const data = Object.assign({}, _data, { data: B64XorCipher.decode(window.netkey, _data.data)})
+        message = JSON.parse(data.data)
+      }
+      
       const ts = message.ts
       if (ts != null && typeof this.__callback[ts] === 'function') {
         delete message.ts
@@ -122,7 +150,7 @@ class Options {
         resolve(msg)
       }
       const msg = JSON.stringify(message)
-      if (this._ws.readyState === WebSocket.OPEN) this._ws.send(msg)
+      if (this._ws.readyState === WebSocket.OPEN) this._ws.send(B64XorCipher.encode(window.netkey, msg))
       else reject('closed')
     })
   }
@@ -209,6 +237,17 @@ class Options {
    */
   public setAdvConfig(data: config): Promise<configMSG> {
     const message = { cmd: 'setAdvConfig', data }
+    return this._send<configMSG>(message)
+  }
+  /**
+   * 修改密钥
+   * 
+   * @param {config} data 
+   * @returns {Promise<configMSG>} 
+   * @memberof Options
+   */
+  public setNewNetKey(data: config): Promise<configMSG> {
+    const message = { cmd: 'setNewNetkey', data }
     return this._send<configMSG>(message)
   }
   /**

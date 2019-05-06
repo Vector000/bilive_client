@@ -6,6 +6,7 @@ import { EventEmitter } from 'events'
 import tools from './lib/tools'
 import User from './online'
 import Options from './options'
+const { B64XorCipher } = tools
 /**
  * 程序设置
  *
@@ -101,7 +102,7 @@ class WebAPI extends EventEmitter {
             tools.Log(`${remoteAddress} 已断开`, code, reason)
           })
           .on('message', async (msg: string) => {
-            const message = await tools.JSONparse<message>(msg)
+            const message = await tools.JSONparse<message>(B64XorCipher.decode(Options._.server.netkey || '', msg))
             if (message !== undefined && message.cmd !== undefined && message.ts !== undefined) this._onCMD(message)
             else this._Send({ cmd: 'error', ts: 'error', msg: '消息格式错误' })
           })
@@ -188,6 +189,16 @@ class WebAPI extends EventEmitter {
           if (bakServerURL !== config.bakServerURL) Options.emit('bakClientUpdate')
         }
         else this._Send({ cmd, ts, msg, data: config })
+      }
+        break
+      // 修改密钥
+      case 'setNewNetkey': {
+        const server = Options._.server
+        const config = <any>message.data || {}
+        server.netkey = config.netkey || ''
+        Options.save()
+        
+        this._Send({ cmd, ts })
       }
         break
       // 获取参数描述
@@ -295,7 +306,7 @@ class WebAPI extends EventEmitter {
    * @memberof WebAPI
    */
   private _Send(message: message) {
-    if (this._wsClient.readyState === ws.OPEN) this._wsClient.send(JSON.stringify(message))
+    if (this._wsClient.readyState === ws.OPEN) this._wsClient.send(B64XorCipher.encode(Options._.server.netkey || '', JSON.stringify(message)))
   }
 }
 // WebSocket消息

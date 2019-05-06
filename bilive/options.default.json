@@ -3,7 +3,8 @@
     "path": "",
     "hostname": "",
     "port": 23333,
-    "protocol": "admin"
+    "protocol": "admin",
+    "netkey": ""
   },
   "config": {
     "localListener": false,

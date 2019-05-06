@@ -1,3 +1,6 @@
+import { Options } from './options.ts'
+import { modal } from './tools.ts'
+
 const options = new Options()
 let optionsInfo: optionsInfo
 const dDiv = <HTMLDivElement>document.querySelector('#ddd')
@@ -8,10 +11,15 @@ const configDiv = <HTMLDivElement>document.querySelector('#config')
 const advConfigDiv = <HTMLDivElement>document.querySelector('#advConfig')
 const userDiv = <HTMLDivElement>document.querySelector('#user')
 const logDiv = <HTMLDivElement>document.querySelector('#log')
+const changeNetkeyDiv = <HTMLDivElement>document.querySelector('#changeNetkey')
 const advOptionReturnButton = <HTMLElement>document.querySelector('#optionReturn')
+const netkeyReturnButton = <HTMLElement>document.querySelector('#netkeyReturn')
 const returnButton = <HTMLElement>document.querySelector('#logreturn')
-const modalDiv = <HTMLDivElement>document.querySelector('.modal')
 const template = <HTMLDivElement>document.querySelector('#template')
+
+declare const window: any
+$('[data-toggle="tooltip"]').tooltip()
+
 // 3D效果
 let firstDiv: HTMLDivElement = loginDiv
 let secondDiv: HTMLDivElement
@@ -46,6 +54,7 @@ dDiv.addEventListener('animationend', () => {
 function showLogin() {
   const pathInput = <HTMLInputElement>loginDiv.querySelector('#path input')
   const protocolInput = <HTMLInputElement>loginDiv.querySelector('#protocol input[type="text"]')
+  const netkeyInput = <HTMLInputElement>loginDiv.querySelector('#netkey input[name="netkey"]')
   const connectButton = <HTMLElement>loginDiv.querySelector('#connect button')
   const connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
   if (location.hash !== '') {
@@ -53,10 +62,14 @@ function showLogin() {
     if (loginInfo !== null) {
       pathInput.value = loginInfo[1]
       protocolInput.value = loginInfo[2]
+    } else {
+      pathInput.value = localStorage.getItem('path') || 'admin'
     }
   }
   connectButton.onclick = async () => {
     const protocols = [protocolInput.value]
+    localStorage.setItem('path', pathInput.value)
+    window.netkey = netkeyInput.value
     const connected = await options.connect(pathInput.value, protocols)
     if (connected) login()
     else connectSpan.innerText = '连接失败'
@@ -88,6 +101,7 @@ async function login() {
   await showAdvOption()
   await showUser()
   showLog()
+  showChangeNetkey()
 }
 /**
  * 加载全局设置
@@ -98,6 +112,7 @@ async function showConfig() {
   const addUserButton = <HTMLElement>document.querySelector('#addUser')
   const showAdvButton = <HTMLElement>document.querySelector('#showAdvOption')
   const showLogButton = <HTMLElement>document.querySelector('#showLog')
+  const showChangeNetkeyButton = <HTMLElement>document.querySelector('#showChangeNetkey')
   const configMSG = await options.getConfig()
   let config = configMSG.data
   const configDF = getConfigTemplate(config)
@@ -132,6 +147,10 @@ async function showConfig() {
   showLogButton.onclick = () => {
     danimation(logDiv)
   }
+  // 显示密钥修改
+  showChangeNetkeyButton.onclick = () => {
+    danimation(changeNetkeyDiv)
+  }
   configDiv.appendChild(configDF)
 }
 /**
@@ -160,6 +179,32 @@ async function showAdvOption() {
     danimation(optionDiv)
   }
   advConfigDiv.appendChild(advConfigDF)
+}
+/**
+ * 修改密钥
+ *
+ */
+async function showChangeNetkey() {
+  const saveNewNetkeyButton = <HTMLElement>document.querySelector('#saveNewNetkey')
+  const newNetkey1Input = <HTMLInputElement>document.querySelector('input[name="newNetkey1"]')
+  const newNetkey2Input = <HTMLInputElement>document.querySelector('input[name="newNetkey2"]')
+  // 保存高级设置
+  saveNewNetkeyButton.onclick = async () => {
+    modal()
+    if(newNetkey1Input.value === newNetkey2Input.value) {
+      window.newNetkey = newNetkey1Input.value
+      await options.setNewNetKey({netkey: window.newNetkey})
+      newNetkey1Input.value = ''
+      newNetkey2Input.value = ''
+      modal({ body: '修改成功！' })
+    } else {
+      modal({ body: '两次输入的密钥请保持一致！' })
+    }
+    
+  }
+  netkeyReturnButton.onclick = () => {
+    danimation(optionDiv)
+  }
 }
 /**
  * 加载Log
@@ -323,44 +368,5 @@ function wsClose(data: string) {
   connectSpan.innerText = data
   danimation(loginDiv)
 }
-/**
- * 弹窗提示
- * 无参数时只显示遮罩
- *
- * @param {modalOPtions} [options]
- */
-function modal(options?: modalOPtions) {
-  if (options != null) {
-    const modalDialogDiv = <HTMLDivElement>modalDiv.querySelector('.modal-dialog')
-    const modalTemplate = <HTMLTemplateElement>template.querySelector('#modalContentTemplate')
-    const clone = document.importNode(modalTemplate.content, true)
-    const headerTitle = <HTMLHeadingElement>clone.querySelector('.modal-header .modal-title')
-    const headerClose = <HTMLElement>clone.querySelector('.modal-header .close')
-    const modalBody = <HTMLDivElement>clone.querySelector('.modal-body')
-    const footerClose = <HTMLElement>clone.querySelector('.modal-footer .btn-secondary')
-    const footerOK = <HTMLElement>clone.querySelector('.modal-footer .btn-primary')
-    headerClose.onclick = footerClose.onclick = () => {
-      $(modalDiv).one('hidden.bs.modal', () => {
-        modalDialogDiv.innerText = ''
-        if (typeof options.onClose === 'function') options.onClose(options.body)
-      })
-      $(modalDiv).modal('hide')
-    }
-    footerOK.onclick = () => {
-      $(modalDiv).one('hidden.bs.modal', () => {
-        modalDialogDiv.innerText = ''
-        if (typeof options.onOK === 'function') options.onOK(options.body)
-      })
-      $(modalDiv).modal('hide')
-    }
-    if (options.body instanceof DocumentFragment) modalBody.appendChild(options.body)
-    else modalBody.innerText = options.body
-    if (options.title != null) headerTitle.innerText = options.title
-    if (options.close != null) footerClose.innerText = options.close
-    if (options.ok != null) footerOK.innerText = options.ok
-    if (options.showOK) footerOK.classList.remove('d-none')
-    modalDialogDiv.appendChild(clone)
-  }
-  $(modalDiv).modal({ backdrop: 'static', keyboard: false })
-}
+
 showLogin()

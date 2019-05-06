@@ -175,4 +175,32 @@ function sendSCMSG(message: string) {
 function Sleep(ms: number): Promise<'sleep'> {
   return new Promise<'sleep'>(resolve => setTimeout(() => resolve('sleep'), ms))
 }
-export default { XHR, setCookie, getCookie, getShortRoomID, getLongRoomID, JSONparse, Hash, Log, logs, ErrorLog, sendSCMSG, Sleep }
+
+/**
+ * 异或加密
+ *
+ * @param {string} key
+ * @param {string} input
+ * @returns {string}
+ */
+function xorStrings(key: string, input: string): string{
+  let output: string = '';
+  for(let i = 0, len = input.length; i < len; i++) {
+    output += String.fromCharCode(
+      input.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+    );
+  }
+  return output;
+}
+
+export const B64XorCipher = {
+  encode(key: string, data: string): string {
+    return (data && data !== '' && key !== '')? new Buffer(xorStrings(key, data), 'utf8').toString('base64') : data;
+  },
+  decode(key: string, data: string): string {
+    return (data && data !== '' && key !== '')? xorStrings(key, new Buffer(data, 'base64').toString('utf8')) : data;
+  }
+};
+
+
+export default { XHR, setCookie, getCookie, getShortRoomID, getLongRoomID, JSONparse, Hash, Log, logs, ErrorLog, sendSCMSG, Sleep, B64XorCipher }

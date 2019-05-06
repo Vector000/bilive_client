@@ -22,6 +22,7 @@ interface server {
   hostname: string
   port: number
   protocol: string
+  netkey: string
 }
 interface config {
   [index: string]: boolean | number | string | number[]

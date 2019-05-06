@@ -13,9 +13,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <!-- 与服务器通信 -->
-  <script defer type="text/javascript" src="./view/options.js"></script>
-  <!-- 自定义 -->
+  <!-- 运行脚本 -->
   <script defer type="text/javascript" src="./view/script.js"></script>
 </head>
 
@@ -35,16 +33,22 @@
               </div>
               <div class="card-body">
                 <div id="path" class="input-group mt-2">
-                  <div class="input-group-prepend">
+                  <div class="input-group-prepend" data-toggle="tooltip" data-placement="top" title="通讯地址不会进行加密">
                     <span class="input-group-text">地址</span>
                   </div>
                   <input type="text" class="form-control" value="ws://localhost:23333">
                 </div>
                 <div id="protocol" class="input-group mt-1">
-                  <div class="input-group-prepend">
+                  <div class="input-group-prepend" data-toggle="tooltip" data-placement="top" data-html="true" title="<strong>protocol</strong>不会进行加密，请勿当作密码使用">
                     <span class="input-group-text">protocol</span>
                   </div>
                   <input type="text" class="form-control" value="admin">
+                </div>
+                <div id="netkey" class="input-group mt-1">
+                  <div class="input-group-prepend" data-toggle="tooltip" data-html="true" data-placement="top" title="<p>输入的密钥仅储存在页面的内存中，对所有的通讯数据进行加密或解密，以提升数据安全性（不填则不适用加密）</p><p>本加密会使数据体积增大，但对带宽影响还是很小的，强烈建议开启！</p>">
+                    <span class="input-group-text">密钥</span>
+                  </div>
+                  <input type="password" class="form-control" name="netkey" value="">
                 </div>
               </div>
               <div id="connect" class="card-footer">
@@ -69,6 +73,7 @@
                 <button type="button" id="addUser" class="btn btn-primary">添加用户</button>
                 <button type="button" id="showAdvOption" class="btn btn-primary">高级设置</button>
                 <button type="button" id="showLog" class="btn btn-primary">显示日志</button>
+                <button type="button" id="showChangeNetkey" class="btn btn-primary">修改密钥</button>
               </div>
             </div>
           </div>
@@ -87,6 +92,42 @@
               <div class="card-footer">
                 <button type="button" id="saveAdvConfig" class="btn btn-primary">保存设置</button>
                 <button type="button" id="optionReturn" class="btn btn-primary">返回</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 修改密钥 -->
+      <div id="changeNetkey" class="container-fluid position-absolute d-none">
+        <div class="row justify-content-center">
+          <div class="col-md-8 m-3">
+            <div class="card border-primary">
+              <div class="card-header">
+                <h4>
+                  注意：由于密钥是一直在使用的，建议有能力的话在服务器中手动修改<code>options.json</code>配置文件中<code>netkey</code>的值。
+                  <br>
+                  如果不行的话，可以在这里修改。这里会使用一些黑魔法的方式修改密钥，不保证兼容所有浏览器。
+                  <br>
+                  若长时间卡住在此界面，请手动刷新，并尝试使用新的密钥。
+                </h4>
+              </div>
+              <div class="card-body">
+                  <div class="input-group mt-1">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">新密钥</span>
+                    </div>
+                    <input type="password" class="form-control" name="newNetkey1" value="">
+                  </div>
+                  <div class="input-group mt-1">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">再输入一次新密钥</span>
+                    </div>
+                    <input type="password" class="form-control" name="newNetkey2" value="">
+                  </div>
+              </div>
+              <div class="card-footer">
+                <button type="button" id="saveNewNetkey" class="btn btn-primary">保存新密钥</button>
+                <button type="button" id="netkeyReturn" class="btn btn-primary">返回</button>
               </div>
             </div>
           </div>
