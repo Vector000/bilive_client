@@ -12,6 +12,9 @@ module.exports = {
         publicPath: '/'
     },
     // devtool: "source-map",
+    resolve: {
+        extensions:['.js', '.ts']
+    },
     module: {
         rules: [
             { 

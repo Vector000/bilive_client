@@ -1,4 +1,4 @@
-import { B64XorCipher, modal } from './tools.ts'
+import { B64XorCipher, modal } from './tools'
 
 declare const options: any
 declare const window: any

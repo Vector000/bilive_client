@@ -1,5 +1,5 @@
-import { Options } from './options.ts'
-import { modal } from './tools.ts'
+import { Options } from './options'
+import { modal } from './tools'
 
 const options = new Options()
 let optionsInfo: optionsInfo
