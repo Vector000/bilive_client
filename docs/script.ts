@@ -63,12 +63,17 @@ function showLogin() {
       pathInput.value = loginInfo[1]
       protocolInput.value = loginInfo[2]
     } else {
-      pathInput.value = localStorage.getItem('path') || 'admin'
+      pathInput.value = localStorage.getItem('path') || pathInput.value
+      protocolInput.value = localStorage.getItem('protocol') || protocolInput.value
     }
+  } else {
+    pathInput.value = localStorage.getItem('path') || pathInput.value
+    protocolInput.value = localStorage.getItem('protocol') || protocolInput.value
   }
   connectButton.onclick = async () => {
     const protocols = [protocolInput.value]
     localStorage.setItem('path', pathInput.value)
+    localStorage.setItem('protocol', protocolInput.value)
     window.netkey = netkeyInput.value
     const connected = await options.connect(pathInput.value, protocols)
     if (connected) login()
