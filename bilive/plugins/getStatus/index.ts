@@ -196,8 +196,7 @@ class GetStatus extends Plugin {
     for (const [uid, user] of users) {
       if (!user.userData.status) continue
       let tmp: any = {
-        biliUID: user.userData.biliUID,
-        nickname: user.nickname,
+        userData: user.userData,
         raffleBan: this._raffleBanList.get(user.uid),
         stormBan: this._stormBanList.get(user.uid)
       }
@@ -311,7 +310,7 @@ class GetStatus extends Plugin {
         else if (r === false && s === true) return '风暴黑屋'
         else return '未封禁'
       }(user.raffleBan, user.stormBan)
-      line = `\n/************************************ 用户 ${user.nickname} 信息 ************************************/\n`
+      line = `\n/************************************ 用户 ${user.userData.nickname} 信息 ************************************/\n`
       live = function() {
         if (!user.liveData || user.liveData === undefined) return (`用户信息获取失败`)
         else {
@@ -390,7 +389,7 @@ EXP：${user.medalData.intimacy}/${user.medalData.next_intimacy} \
         else if (r === false && s === true) return '风暴黑屋'
         else return '未封禁'
       }(user.raffleBan, user.stormBan)
-      line = `# 用户 *****${user.nickname}***** 信息\n`
+      line = `# 用户 *****${user.userData.nickname}***** 信息\n`
       live = function() {
         if (!user.liveData || user.liveData === undefined) return (`## 用户信息获取失败\n`)
         else {
@@ -447,6 +446,15 @@ EXP：${user.medalData.intimacy}/${user.medalData.next_intimacy} \
         return tmp
       }()
       pushMsg += '\n---\n' + line + '\n---\n' + live + '\n---\n' + medal + '\n---\n' + bag + '\n---\n' + raffle + '\n---\n'
+      if (<string>user.userData['serverChan'] !== '') {
+        if (<string>Options._.config['adminServerChan'] !== <string>user.userData['serverChan']) {
+          tools.emit('SCMSG', <systemMSG>{
+            message: '\n---\n' + live + '\n---\n' + medal + '\n---\n' + bag + '\n---\n' + raffle + '\n---\n',
+            options: Options._,
+            serverChan:<string>user.userData['serverChan']
+          })
+        }
+      }
     }
     tools.emit('SCMSG', <systemMSG>{
       message: pushMsg,
