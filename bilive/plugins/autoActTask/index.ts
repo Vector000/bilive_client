@@ -21,13 +21,13 @@ class AutoActTask extends Plugin {
     this.loaded = true
   }
   public async start({ users }: { users: Map<string, User> }) {
-    await this._getEventInfo()
+    this._getEventInfo()
     this._doActTask(users)
   }
   public async loop({ cstMin, cstHour, users }: { cstMin: number, cstHour: number, users: Map<string, User> }) {
     // 每天04:30, 12:30, 20:30做任务
     if (cstMin === 30 && cstHour % 8 === 4) {
-      await this._getEventInfo()
+      this._getEventInfo()
       this._doActTask(users)
     }
   }
@@ -51,7 +51,7 @@ class AutoActTask extends Plugin {
   private _doLPLAct(users: Map<string, User>, lplParams: lplParams[]) {
     lplParams.forEach(param => {
       const { name, endTime, game_type, room_id } = param
-      if ((new Date > new Date(endTime))) return
+      if (new Date > new Date(endTime)) return
       users.forEach(async (user) => {
         if (!user.userData['doActTask']) return
         // 用户签到
@@ -63,7 +63,7 @@ class AutoActTask extends Plugin {
           jar: user.jar,
           json: true
         }
-        tools.XHR<generalCallback>(actAPI1).then(actAPI1Callback => {
+        tools.XHR<taskXHR>(actAPI1).then(actAPI1Callback => {
           if (actAPI1Callback !== undefined && actAPI1Callback.response.statusCode === 200)
             tools.Log(user.nickname, '活动任务', actLPLSgin, '已完成')
         })
@@ -76,7 +76,7 @@ class AutoActTask extends Plugin {
           jar: user.jar,
           json: true
         }
-        tools.XHR<generalCallback>(actAPI2).then(actAPI2Callback => {
+        tools.XHR<taskXHR>(actAPI2).then(actAPI2Callback => {
           if (actAPI2Callback !== undefined && actAPI2Callback.response.statusCode === 200) {
             tools.Log(user.nickname, '活动任务', actLPLShare, '已完成')
           }
@@ -84,21 +84,19 @@ class AutoActTask extends Plugin {
       })
     })
   }
-  private async _getEventInfo() {
+  private _getEventInfo() {
     const url: requestOptions = {
-      method: 'GET',
       uri: `https://raw.githubusercontent.com/Vector000/bilive_client/master/EventInfo.json`,
       json: true
     }
-    await tools.XHR<generalCallback>(url).then(eventInfCallback => {
-      if (eventInfCallback !== undefined && eventInfCallback.response.statusCode === 200) {
-        this._eventInfo = eventInfCallback.response.body
-      }
+    tools.XHR<EventInfo>(url).then(eventInfoCallback => {
+      if (eventInfoCallback !== undefined && eventInfoCallback.response.statusCode === 200)
+        this._eventInfo = eventInfoCallback.body
     })
   }
 }
 
-interface generalCallback {
+interface taskXHR {
   code: number
   msg: string
   ttl: number
@@ -112,7 +110,7 @@ interface lplParams {
   name: string
   room_id: string
   game_type: string
-  endTime: string
+  endTime: number
 }
 
 export default new AutoActTask()

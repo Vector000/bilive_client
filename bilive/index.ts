@@ -52,7 +52,6 @@ class BiLive {
       if (typeof plugin.start === 'function')
         await plugin.start({ options: Options._, users: Options.user }, false)
     })
-    Options.backup()
     this.loop = setInterval(() => this._loop(), 55 * 1000)
     this._WebAPI = new WebAPI()
     this._WebAPI

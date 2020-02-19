@@ -31,6 +31,7 @@ class Options extends EventEmitter {
     }
     else this.restore()
     if (this._ === undefined || this._userOption === undefined) throw new TypeError('文件格式化失败')
+    this.backup()
   }
   /**
    * 用户设置
@@ -166,12 +167,8 @@ class Options extends EventEmitter {
    * @memberof Options
    */
   public async backup() {
-    const optionString = fs.readFileSync(this._dirname + 'options/options.json').toString()
-    if (this.isValidJSON(optionString)) {
-      // options.json为可parse的JSON文件，视为正常文件
-      fs.copyFileSync(this._dirname + 'options/options.json', this._dirname + 'options/options.bak')
-      tools.Log('成功备份options.json')
-    }
+    fs.copyFileSync(this._dirname + 'options/options.json', this._dirname + 'options/options.bak')
+    tools.Log('成功备份options.json')
   }
   /**
    * 还原设置文件
@@ -182,14 +179,10 @@ class Options extends EventEmitter {
     tools.Log('options.json似乎已损坏，将尝试进行还原...')
     if (fs.existsSync(this._dirname + 'options/options.bak')) {
       const backupString = fs.readFileSync(this._dirname + 'options/options.bak').toString()
-      if (this.isValidJSON(backupString)) {
-        // options.bak为可parse的JSON文件，视为正常文件
-        fs.copyFileSync(this._dirname + 'options/options.bak', this._dirname + 'options/options.json')
-        this._userOption = <options>JSON.parse(backupString)
-        this.init()
-       tools.Log('已成功恢复options.json')
-      }
-      else return tools.ErrorLog('备份文件似乎已损坏，请重新进行设置!')
+      fs.copyFileSync(this._dirname + 'options/options.bak', this._dirname + 'options/options.json')
+      this._userOption = <options>JSON.parse(backupString)
+      this.init()
+      tools.Log('已成功恢复options.json')
     }
     else return tools.ErrorLog('未找到备份文件，请重新进行设置!')
   }

@@ -66,7 +66,7 @@ class Raffle extends EventEmitter {
         this._Raffle()
         break
       case 'lottery':
-        this._url = 'https://api.live.bilibili.com/lottery/v2/lottery'
+        this._url = 'https://api.live.bilibili.com/xlive/lottery-interface/v2/Lottery'
         this._Lottery()
         break
       case 'pklottery':
@@ -152,7 +152,7 @@ class Raffle extends EventEmitter {
     const { id, roomID, title, type } = <lotteryMessage>this._raffleMessage
     const reward: requestOptions = {
       method: 'POST',
-      uri: 'https://api.live.bilibili.com/xlive/lottery-interface/v2/Lottery/join',
+      uri: `${this._url}/join`,
       body: AppClient.signQueryBase(`${this._user.tokenQuery}&id=${id}&roomid=${roomID}&type=${type}`),
       json: true,
       headers: this._user.headers
