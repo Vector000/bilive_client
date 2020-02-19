@@ -1,0 +1,15 @@
+{
+    "lpl_task": [{
+            "name": "LPL春季赛",
+            "room_id": "7734200",
+            "game_type": "25",
+            "endTime": "2020-04-02"
+        },
+        {
+            "name": "OW联赛",
+            "room_id": "14073662",
+            "game_type": "26",
+            "endTime": "2020-03-20"
+        }
+    ]
+}
