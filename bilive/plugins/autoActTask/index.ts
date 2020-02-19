@@ -110,7 +110,7 @@ interface lplParams {
   name: string
   room_id: string
   game_type: string
-  endTime: number
+  endTime: string
 }
 
 export default new AutoActTask()
