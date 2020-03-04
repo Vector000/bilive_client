@@ -12,7 +12,8 @@
     "copy:view": "cp -r docs/view/ docs/index.html build/",
     "copy:view:windows": "xcopy docs\\view\\* build\\view\\ /Y && xcopy docs\\index.html build\\ /Y",
     "clean": "rimraf build && mkdir build && rimraf logs && mkdir logs",
-    "start": "node build/app.js"
+    "start": "node build/app.js",
+    "dev": "npm run build && npm run start"
   },
   "config": {
     "commitizen": {
